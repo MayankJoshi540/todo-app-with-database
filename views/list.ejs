@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Todo List</title>
+  <link rel="stylesheet" href="/style.css">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+   
+</head>
+
+<body>
+  <div class="container">
+    <h1>Todo List</h1>
+
+    <form action="/" method="POST" class="task-form">
+      <input type="text" name="name" placeholder="Enter The Task" required>
+      <button type="submit" class="add-btn">+</button>
+    </form>
+
+    <ul class="task-list">
+      <% items.forEach((item, index) => { %>
+        <li class="task-item">
+          <span>
+            <%= index + 1 %>. <%= item.name %>
+          </span>
+          <div class="btns">
+
+            <form action="/delete" method="POST">
+              <input type="hidden" name="id" value="<%= item._id %>">
+              <button type="submit" class="delete-btn">
+               <i class="fa-solid fa-trash"></i>
+              </button>
+            </form>
+
+            <form action="/edit" method="POST">
+              <input type="hidden" name="index" value="<%= item._id %>">
+              <input type="hidden" name="value" value="<%= item.name %>">
+              <button type="submit" class="edit-btn">
+                <i class="fa-solid fa-pencil"></i>
+              </button>
+            </form>
+          </div>
+        </li>
+      <% }) %>
+    </ul>
+  </div>
+
+</body>
+
+</html>

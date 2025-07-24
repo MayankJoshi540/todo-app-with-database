@@ -33,7 +33,7 @@
               </button>
             </form>
 
-            <form action="/edit" method="POST">
+            <form action="/edit?_method=PUT" method="POST">
               <input type="hidden" name="index" value="<%= item._id %>">
               <input type="hidden" name="value" value="<%= item.name %>">
               <button type="submit" class="edit-btn">

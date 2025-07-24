@@ -1,9 +1,11 @@
 require("dotenv").config(); 
 const express = require("express");
+const methodOverride = require("method-override");
 const bodyParser = require("body-parser");
 const app = express();
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
+app.use(methodOverride('_method'));
 app.use(express.static("public"));
 
 //connecting mongoose
@@ -52,12 +54,12 @@ app.post("/delete", async (req, res) => {
     res.status(500).send("error Fetching");
   }
 });
-app.post("/edit",(req,res)=>{
+app.put("/edit",(req,res)=>{
   const itemId = req.body.index;
   const todo = req.body.value;
   res.render("edit",{value : todo, itemId : itemId })
 })
-app.post("/update", async(req,res)=>{
+app.put("/update", async(req,res)=>{
   const itemId = req.body.itemId;
   const updatedItem = req.body.updatedItem
   try{

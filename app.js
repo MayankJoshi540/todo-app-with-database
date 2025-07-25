@@ -49,7 +49,7 @@ app.post("/delete", async (req, res) => {
   const id = req.body.id;
   try {
     await item.findByIdAndDelete(id);
-    res.redirect("/?msg=Task+Deleted+Successfully");
+    res.redirect("/");
   } catch {
     res.status(500).send("error Fetching");
   }

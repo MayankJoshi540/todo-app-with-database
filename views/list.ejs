@@ -1,51 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <title>Todo List</title>
-  <link rel="stylesheet" href="/style.css">
-   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-   
+    <meta charset="UTF-8">
+    <title>Todo List</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-
 <body>
-  <div class="container">
-    <h1>Todo List</h1>
+    <div class="container">
+        <h1>Todo List</h1>
 
-    <form action="/" method="POST" class="task-form">
-      <input type="text" name="name" placeholder="Enter The Task" required>
-      <button type="submit" class="add-btn">+</button>
-    </form>
+        <form action="/" method="POST" class="task-form">
+            <input type="text" name="name" placeholder="Enter The Task" required>
+            <button type="submit" class="add-btn">+</button>
+        </form>
 
-    <ul class="task-list">
-      <% items.forEach((item, index) => { %>
-        <li class="task-item">
-          <span>
-            <%= index + 1 %>. <%= item.name %>
-          </span>
-          <div class="btns">
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="active">Active</button>
+            <button class="filter-btn" data-filter="completed">Completed</button>
+        </div>
 
-            <form action="/delete" method="POST">
-              <input type="hidden" name="id" value="<%= item._id %>">
-              <button type="submit" class="delete-btn">
-               <i class="fa-solid fa-trash"></i>
-              </button>
-            </form>
+        <ul class="task-list">
+            <% items.forEach((item, index) => { %>
+                <li class="task-item <%= item.completed ? 'completed' : '' %>" data-status="<%= item.completed ? 'completed' : 'active' %>">
+                    <form action="/update-status" method="POST" class="status-form">
+                        <input type="hidden" name="id" value="<%= item._id %>">
+                        <input type="checkbox" name="completed" <%= item.completed ? 'checked' : '' %> onchange="this.form.submit()">
+                    </form>
+                    <span><%= item.name %></span>
+                    <div class="btns">
+                        <form action="/edit?_method=PUT" method="POST">
+                            <input type="hidden" name="index" value="<%= item._id %>">
+                            <input type="hidden" name="value" value="<%= item.name %>">
+                            <button type="submit" class="edit-btn"><i class="fa-solid fa-pencil"></i></button>
+                        </form>
+                        <form action="/delete" method="POST">
+                            <input type="hidden" name="id" value="<%= item._id %>">
+                            <button type="submit" class="delete-btn"><i class="fa-solid fa-trash"></i></button>
+                        </form>
+                    </div>
+                </li>
+            <% }) %>
+        </ul>
 
-            <form action="/edit?_method=PUT" method="POST">
-              <input type="hidden" name="index" value="<%= item._id %>">
-              <input type="hidden" name="value" value="<%= item.name %>">
-              <button type="submit" class="edit-btn">
-                <i class="fa-solid fa-pencil"></i>
-              </button>
-            </form>
-          </div>
-        </li>
-      <% }) %>
-    </ul>
-  </div>
+        <div class="footer-actions">
+            <span class="task-count"></span>
+            <button class="clear-completed-btn">Clear Completed</button>
+        </div>
+    </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const taskItems = document.querySelectorAll('.task-item');
+            const taskCount = document.querySelector('.task-count');
+            const clearCompletedBtn = document.querySelector('.clear-completed-btn');
+
+            function updateTaskCount() {
+                const activeTasks = document.querySelectorAll('.task-item[data-status="active"]').length;
+                taskCount.textContent = `${activeTasks} tasks left`;
+            }
+
+            function filterTasks(filter) {
+                taskItems.forEach(item => {
+                    switch (filter) {
+                        case 'all':
+                            item.style.display = 'flex';
+                            break;
+                        case 'active':
+                            item.style.display = item.dataset.status === 'active' ? 'flex' : 'none';
+                            break;
+                        case 'completed':
+                            item.style.display = item.dataset.status === 'completed' ? 'flex' : 'none';
+                            break;
+                    }
+                });
+            }
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    filterTasks(button.dataset.filter);
+                });
+            });
+
+            clearCompletedBtn.addEventListener('click', () => {
+                const completedTasks = document.querySelectorAll('.task-item[data-status="completed"]');
+                const taskIds = Array.from(completedTasks).map(task => task.querySelector('input[name="id"]').value);
+
+                if (taskIds.length > 0) {
+                    fetch('/delete-completed', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ ids: taskIds })
+                    }).then(response => {
+                        if (response.ok) {
+                            window.location.reload();
+                        }
+                    });
+                }
+            });
+
+            updateTaskCount();
+        });
+    </script>
 </body>
-
 </html>

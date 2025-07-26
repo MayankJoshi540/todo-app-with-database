@@ -4,7 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Edit The Item</title>
+  <title>Edit Task</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -12,52 +13,76 @@
       box-sizing: border-box;
     }
 
-    main {
+    body {
       height: 100vh;
-      width: 100vw;
+      background-color: #a5adb3;
+      font-family: 'Poppins', sans-serif;
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 20px;
     }
 
     .box {
-      padding: 30px;
-      margin: 20px auto;
-      height: 400px;
-      width: 400px;
-      border: 2px solid black;
+      background-color: #f6e5e5;
+      padding: 40px 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #2d3a45;
+    }
+
+    form {
       display: flex;
-      justify-content: center;
-      align-items: center;
+      flex-direction: column;
+      gap: 20px;
     }
 
     input[type="text"] {
-      padding: 10px;
+      padding: 12px 14px;
       font-size: 1rem;
-      width: 250px;
-      margin-right: 10px;
+      border: 2px solid #c4d0db;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    input[type="text"]:focus {
+      border-color: #6678af;
     }
 
     input[type="submit"] {
-      padding: 10px;
+      background-color: #6678af;
+      color: white;
+      border: none;
+      padding: 12px;
       font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #5569a5;
     }
   </style>
 </head>
 
 <body>
-  <main>
-   
-    <div class="box">
-       
-      <form action="/update?_method=PUT" method="post">
-        <input type="hidden" name="itemId" value="<%= itemId %>">
-        <input type="text" name="updatedItem" value="<%=value%>" required>
-        <input type="submit" value="Update">
-      </form>
-    </div>
-  </main>
+  <div class="box">
+    <h2>Edit Task</h2>
+    <form action="/update?_method=PUT" method="post">
+      <input type="hidden" name="itemId" value="<%= itemId %>">
+      <input type="text" name="updatedItem" value="<%= value %>" required>
+      <input type="submit" value="Update Task">
+    </form>
+  </div>
 </body>
 
 </html>
-    
